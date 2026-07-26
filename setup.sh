@@ -193,6 +193,7 @@ perform_sso_login() {
         
         echo -e "\n${YELLOW}=== Action Required ===${NC}"
         echo -e "1. Open the URL shown below in your browser."
+        echo -e "   ${CYAN}(Tip: Use an Incognito/Private window if you need to switch users or force a password/MFA prompt)${NC}"
         echo -e "2. Enter the device code provided."
         echo -e "3. Complete any MFA required."
         echo -e "4. Return to this terminal once authorized.\n"
@@ -224,7 +225,19 @@ verify_identity() {
     local caller_identity
     
     if ! caller_identity=$(aws sts get-caller-identity --profile "$PROFILE_NAME"); then
-        fatal "Could not retrieve caller identity. Ensure SSO authentication was successful."
+        echo -e "\n${RED}=== Role Access Denied ===${NC}"
+        echo -e "Your SSO login succeeded, but you do not have permission to assume the configured role."
+        echo -e "  Target Account ID: ${AWS_ACCOUNT_ID}"
+        echo -e "  Target Role Name:  ${SSO_ROLE_NAME}"
+        echo -e "\n${YELLOW}How to fix this:${NC}"
+        echo -e "1. If your assigned Permission Set has a different name, override it like this:"
+        echo -e "     export SSO_ROLE_NAME=\"YourActualRoleName\""
+        echo -e "     ./setup.sh"
+        echo -e "2. If you accidentally logged in as the wrong user, log out locally first:"
+        echo -e "     aws sso logout"
+        echo -e "   Then run ./setup.sh again and open the login link in an ${CYAN}Incognito/Private${NC} browser window."
+        echo -e "3. Verify with your DevOps team that you have been granted access to this account.\n"
+        fatal "Could not retrieve caller identity."
     fi
     
     local account_id
