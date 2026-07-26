@@ -229,14 +229,41 @@ verify_identity() {
         echo -e "Your SSO login succeeded, but you do not have permission to assume the configured role."
         echo -e "  Target Account ID: ${AWS_ACCOUNT_ID}"
         echo -e "  Target Role Name:  ${SSO_ROLE_NAME}"
-        echo -e "\n${YELLOW}How to fix this:${NC}"
-        echo -e "1. If your assigned Permission Set has a different name, override it like this:"
-        echo -e "     export SSO_ROLE_NAME=\"YourActualRoleName\""
-        echo -e "     ./setup.sh"
-        echo -e "2. If you accidentally logged in as the wrong user, log out locally first:"
+        
+        # Automatically discover available roles
+        local cache_dir=~/.aws/sso/cache
+        if [[ -d "$cache_dir" ]]; then
+            local token_file
+            token_file=$(grep -l accessToken "$cache_dir"/*.json 2>/dev/null | xargs ls -t 2>/dev/null | head -n 1)
+            if [[ -n "$token_file" ]]; then
+                local access_token
+                access_token=$(jq -r .accessToken "$token_file")
+                if [[ -n "$access_token" && "$access_token" != "null" ]]; then
+                    echo -e "\n${CYAN}Discovering your available roles in account ${AWS_ACCOUNT_ID}...${NC}"
+                    local roles_json
+                    if roles_json=$(aws sso list-account-roles --account-id "$AWS_ACCOUNT_ID" --access-token "$access_token" 2>/dev/null); then
+                        local available_roles
+                        available_roles=$(echo "$roles_json" | jq -r '.roleList[].roleName')
+                        if [[ -n "$available_roles" ]]; then
+                            echo -e "${GREEN}Good news! We found the following roles assigned to you:${NC}"
+                            while IFS= read -r role; do
+                                echo -e "  - ${YELLOW}$role${NC}"
+                            done <<< "$available_roles"
+                            echo -e "\nTo use one of these roles, simply run:"
+                            echo -e "  ${YELLOW}export SSO_ROLE_NAME=\"<RoleName>\"${NC}"
+                            echo -e "  ${YELLOW}./setup.sh${NC}"
+                            echo -e "\n${CYAN}------------------------------------------${NC}"
+                        fi
+                    fi
+                fi
+            fi
+        fi
+
+        echo -e "\n${YELLOW}Other Troubleshooting Steps:${NC}"
+        echo -e "1. If you accidentally logged in as the wrong user, log out locally first:"
         echo -e "     aws sso logout"
         echo -e "   Then run ./setup.sh again and open the login link in an ${CYAN}Incognito/Private${NC} browser window."
-        echo -e "3. Verify with your DevOps team that you have been granted access to this account.\n"
+        echo -e "2. Verify with your DevOps team that you have been granted access to this account.\n"
         fatal "Could not retrieve caller identity."
     fi
     
