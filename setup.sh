@@ -341,7 +341,7 @@ verify_repo_access() {
 test_package_install() {
     log_info "Testing package access (dry verification)..."
     
-    local test_pkg="employee-management"
+    local test_pkg="company-web"
     
     if pip3 index versions "$test_pkg" >/dev/null 2>&1; then
          log_success "✔ Repository connection verified (found ${test_pkg})."
@@ -369,10 +369,13 @@ main() {
     echo -e "\n${BLUE}==========================================${NC}"
     echo -e "${GREEN} Setup Complete${NC}"
     echo -e "${BLUE}==========================================${NC}"
-    echo -e "\nYou can now install packages using:"
+    echo -e "\n${CYAN}Tip: If you are on Ubuntu/Debian, create a virtual environment first:${NC}"
+    echo -e "  python3 -m venv .venv && source .venv/bin/activate\n"
+    
+    echo -e "You can now install packages using:"
     echo -e "  ${YELLOW}pip install <package-name>${NC}"
     echo -e "\nExample:"
-    echo -e "  ${YELLOW}pip install employee-management==1.0.0${NC}\n"
+    echo -e "  ${YELLOW}pip install company-web==1.0.5${NC}\n"
     echo -e "${CYAN}Note: CodeArtifact tokens expire every 12 hours. If you receive authentication errors, simply rerun this setup script to refresh the token while reusing your active SSO session.${NC}\n"
 }
 
