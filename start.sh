@@ -20,7 +20,7 @@ echo -e "${BLUE}==========================================${NC}"
 
 # 1. Refresh AWS SSO Login
 echo -e "\n${YELLOW}[INFO] Refreshing AWS SSO session for profile '${PROFILE_NAME}'...${NC}"
-if aws sso login --profile "$PROFILE_NAME"; then
+if aws sso login --profile "$PROFILE_NAME" --use-device-code; then
     echo -e "${GREEN}[SUCCESS] AWS SSO session is active.${NC}"
 else
     echo -e "${RED}[ERROR] Failed to login to AWS SSO.${NC}"
