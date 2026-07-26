@@ -30,6 +30,17 @@ You must run this script from a **Linux** (e.g., Ubuntu/Debian/WSL) or **macOS**
    pip install company-web==1.0.5
    ```
 
+## Daily Usage (Refreshing Sessions)
+
+AWS CodeArtifact authorization tokens strictly expire every **12 hours** for security. You do not need to run the full `setup.sh` every morning. 
+
+Instead, simply run `start.sh` at the beginning of your workday to fetch fresh tokens using your existing AWS profile:
+
+```bash
+chmod +x start.sh
+./start.sh
+```
+
 ---
 
 ## What Does This Script Do?
