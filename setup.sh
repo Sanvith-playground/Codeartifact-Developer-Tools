@@ -309,7 +309,7 @@ configure_pip() {
         --repository "$CA_REPO" \
         --domain "$CA_DOMAIN" \
         --domain-owner "$CA_DOMAIN_OWNER" \
-        --profile "$PROFILE_NAME" >/dev/null 2>&1; then
+        --profile "$PROFILE_NAME"; then
         
         log_success "pip configured successfully via 'aws codeartifact login'."
     else
