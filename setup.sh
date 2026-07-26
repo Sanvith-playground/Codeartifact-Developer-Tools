@@ -223,7 +223,7 @@ verify_identity() {
     log_info "Verifying AWS identity context..."
     local caller_identity
     
-    if ! caller_identity=$(aws sts get-caller-identity --profile "$PROFILE_NAME" 2>/dev/null); then
+    if ! caller_identity=$(aws sts get-caller-identity --profile "$PROFILE_NAME"); then
         fatal "Could not retrieve caller identity. Ensure SSO authentication was successful."
     fi
     
