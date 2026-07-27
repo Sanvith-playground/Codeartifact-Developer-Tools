@@ -1,0 +1,10 @@
+sudo apt update
+sudo apt install -y awscli python3 python3-pip jq curl
+
+
+chmod +x setup.sh
+./setup.sh
+
+
+
+pip install company-web==1.0.5
