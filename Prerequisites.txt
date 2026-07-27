@@ -1,5 +1,11 @@
+# Ubuntu/Debian Prerequisites
 sudo apt update
 sudo apt install -y awscli python3 python3-pip jq curl
+
+# Windows (PowerShell) Prerequisites
+winget install Amazon.AWSCLI
+winget install Python.Python.3
+winget install jqlang.jq
 
 
 chmod +x setup.sh
